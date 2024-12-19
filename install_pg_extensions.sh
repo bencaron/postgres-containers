@@ -34,6 +34,31 @@ for EXTENSION in ${EXTENSIONS}; do
         continue
     fi
 
+    # special case: vector.rs
+    if [ "$EXTENSION" == "vecto.rs" ]; then
+        # pgvector.rs is offered as a deb package but not via a repository
+        apt-get install apt-transport-https lsb-release wget -y
+
+        ARCH=$(dpkg --print-architecture)
+
+        wget --quiet https://github.com/tensorchord/pgvecto.rs/releases/download/v${VECTORS_VERSION}/vectors-pg${PG_MAJOR}_${VECTORS_VERSION}_${ARCH}.deb \
+            -O vectors-pg.deb
+        wget --quiet https://github.com/tensorchord/pgvecto.rs/releases/download/v${VECTORS_VERSION}/vectors-pg${PG_MAJOR}_${VECTORS_VERSION}_${ARCH}_extensions.deb \
+            -O vectors-pg_extensions.deb
+        wget --quiet https://github.com/tensorchord/pgvecto.rs/releases/download/v${VECTORS_VERSION}/vectors-pg${PG_MAJOR}_${VECTORS_VERSION}_${ARCH}_public.deb \
+            -O vectors-pg_public.deb
+        wget --quiet https://github.com/tensorchord/pgvecto.rs/releases/download/v${VECTORS_VERSION}/vectors-pg${PG_MAJOR}_${VECTORS_VERSION}_${ARCH}_vectors.deb \
+            -O vectors-pg_vectors.deb
+
+        dpkg -i vectors-pg*.deb
+
+        # cleanup
+        apt-get remove apt-transport-https lsb-release wget --auto-remove -y
+
+        continue
+    fi
+
+
     # is it an extension found in apt?
     if apt-cache show "postgresql-${PG_MAJOR}-${EXTENSION}" &> /dev/null; then
         # install the extension

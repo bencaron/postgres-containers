@@ -41,6 +41,12 @@ For the Timescaledb version you can also provide a different version as build ar
 docker build -t postgresql --build-arg TIMESCALEDB_VERSION=2.11.0 .
 ```
 
+Same goes for Vecto.rs:
+
+```shell
+docker build -t postgresql --build-arg EXTENSIONS="vecto.rs cron" --build-arg VECTORS_VERSION=0.4.0 .
+```
+
 # Building with GitHub Actions
 
 This repository contains a GitHub Actions workflow that builds the image and pushes it to the
